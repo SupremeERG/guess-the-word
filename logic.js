@@ -6,9 +6,8 @@ var wordsList = ["jerome", "neena", "darion", "lou", "greg", "jordan",
   "jasmine", "stephen", "jacob", "adam", "rui", "luis"];
 // Solution will be held here.
 var chosenWord = wordsList[Math.floor(Math.random() * wordsList.length)];
-console.log(chosenWord)
 // This will break the solution into individual letters to be stored in array.
-var lettersInChosenWord = chosenWord.split('');
+var lettersInChosenWord = chosenWord.split("");
 // This will be the number of blanks we show based on the solution
 var blanks = genBlanks(lettersInChosenWord.length).join(' ');
 $('#word-blanks').text(blanks)
@@ -23,9 +22,9 @@ var ignored = ["control", "{", "}", "[", "]", "/", "\\", "|", ".", ",", "'", '"'
 // Game counters
 var winCounter = 0;
 var lossCounter = 0;
-var numGuesses = chosenWord.length;
+var numGuesses = 9;
 
-$('#guesses-left').text(numGuesses)
+$('#guesses-left').text(numGuesses);
 
 // FUNCTIONS (These are bits of code that we will call upon to run when needed)
 // =========================================================================================
@@ -65,16 +64,12 @@ function findPositions(first, second) {
   });
   return indicies;
 };
-
-var i = 0;
-var guessed = []
-$(document).on('keyup', function (e) {
+function run(e) {
   var indexes = findPositions(lettersInChosenWord, [e.key])
   if (i == 0) {
     // check if game started
     i++;
     $('.jumbotron').remove();
-    $('#refresh').show();
     $('.row').css('margin-top', '25px')
   }
   else {
@@ -98,5 +93,42 @@ $(document).on('keyup', function (e) {
     $('#wrong-guesses').text(wrongGuesses.join(', '));
     $('#guesses-left').text(numGuesses);
   }
+  if (lettersInChosenWord.join("") === $('#word-blanks').text().split(" ").join("")) {
+    // ..add to the win counter & give the user an alert.
+    winCounter++;
+    alert("You win!");
 
-})
+    // Update the win counter in the HTML & restart the game.
+    $("#win-counter").text(winCounter)
+    startGame();
+  }
+
+  // If we've run out of guesses..
+  else if (numGuesses === 0) {
+    // Add to the loss counter.
+    lossCounter++;
+    // Give the user an alert.
+    alert("You lose");
+
+    // Update the loss counter in the HTML.
+    $('#loss-counter').text(lossCounter);
+  }
+
+
+}
+function startGame() {
+  numGuesses = 9;
+  chosenWord = wordsList[Math.floor(Math.random() * wordsList.length)];
+  lettersInChosenWord = chosenWord.split("")
+  wrongGuesses = [];
+  blanks = genBlanks(lettersInChosenWord.length).join(' ');
+  guessed = [];
+
+  $('#wrong-guesses').text(wrongGuesses.join(', '));
+  $('#guesses-left').text(numGuesses);
+  $('#word-blanks').text(blanks);
+}
+
+var i = 0;
+var guessed = []
+$(document).on('keyup', run)
