@@ -65,7 +65,7 @@ function findPositions(first, second) {
   return indicies;
 };
 function run(e) {
-  var indexes = findPositions(lettersInChosenWord, [e.key])
+  var indexes = findPositions(lettersInChosenWord, [e.key.toLowerCase()])
   if (i == 0) {
     // check if game started
     i++;
@@ -75,20 +75,20 @@ function run(e) {
   else {
 
     if (numGuesses == 0) return;
-    findPositions(lettersInChosenWord, [e.key]).forEach(index => {
-      if (guessed.indexOf(e.key) != -1) return;
+    findPositions(lettersInChosenWord, [e.key.toLowerCase()]).forEach(index => {
+      if (guessed.indexOf(e.key.toLowerCase()) != -1) return;
       var elem = $('#word-blanks').text();
       // check how many indexes of certain letters there are
       if (index != -1) {
-        var newBlanks = genBlanks(null, index, e.key, elem).join(' ');
+        var newBlanks = genBlanks(null, index, e.key.toLowerCase(), elem).join(' ');
         // set the blanks after correct key is chosen
         $('#word-blanks').text(newBlanks);
       }
     })
     // stop if special key is presses
     if (ignored.indexOf(e.key.toLowerCase()) != -1) return;
-    if (indexes.length == 0 && guessed.indexOf(e.key) == -1) wrongGuesses.push(e.key);
-    guessed.push(e.key)
+    if (indexes.length == 0 && guessed.indexOf(e.key.toLowerCase()) == -1) wrongGuesses.push(e.key.toLowerCase());
+    guessed.push(e.key.toLowerCase())
     numGuesses--;
     $('#wrong-guesses').text(wrongGuesses.join(', '));
     $('#guesses-left').text(numGuesses);
@@ -108,10 +108,11 @@ function run(e) {
     // Add to the loss counter.
     lossCounter++;
     // Give the user an alert.
-    alert("You lose");
+    alert("You lose\nThe word was " + chosenWord);
 
     // Update the loss counter in the HTML.
     $('#loss-counter').text(lossCounter);
+    startGame();
   }
 
 
